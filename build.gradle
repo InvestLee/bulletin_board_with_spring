@@ -1,0 +1,35 @@
+plugins {
+	id 'org.springframework.boot' version '2.7.0'
+	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+	id 'java'
+}
+
+group = 'com.mysite'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	developmentOnly 'org.springframework.boot:spring-boot-devtools' //서버 재시작 없이도 클래스 변경시 서버가 자동으로 재가동된다.
+	//lombok - Getter, Setter 생성자 등을 자동으로 만들어 주는 도구(엔티티 클래스나 DTO 클래스의 속성들에 대한 getter,setter 필요)
+	compileOnly 'org.projectlombok:lombok' //해당 라이브러리가 컴파일 단계에서만 필요한 경우 사용
+    annotationProcessor 'org.projectlombok:lombok' //컴파일 단계에서 에너테이션을 분석하고 처리하기 위해 사용
+    //H2 데이터베이스는 주로 개방용이나 소규모 프로젝트에서 사용되는 파일 기반의 경량 데이터베이스
+    runtimeOnly 'com.h2database:h2' //런타임 시에만 필요한 경우에 사용
+    //JPA는 자바 프로그램에서 데이터베이스에 데이터를 저장하거나 조회하는 용도(ORM의 기술 표준 사용하는 인터페이스 모음) JPA+Hibernate(JPA를 구현한 실제 클래스) 사용
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa' //implementation은 해당 라이브러리 설치를 위해 사용
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf' //템플릿 엔진 타임리프 설치
+    implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect' //템플릿 엔진 타임리프 설치
+    implementation 'org.springframework.boot:spring-boot-starter-validation' //화면에서 전달받은 입력 값을 검증하기 위한 스프링 부트 validation 라이브러리
+    implementation 'org.springframework.boot:spring-boot-starter-security' //스프링 시큐리티 설치
+    implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5' //스프링 시큐리티 설치
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
