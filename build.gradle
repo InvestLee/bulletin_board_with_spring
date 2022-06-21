@@ -25,7 +25,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa' //implementation은 해당 라이브러리 설치를 위해 사용
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf' //템플릿 엔진 타임리프 설치
     implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect' //템플릿 엔진 타임리프 설치
-    implementation 'org.springframework.boot:spring-boot-starter-validation' //화면에서 전달받은 입력 값을 검증하기 위한 스프링 부트 validation 라이브러리
+    implementation 'org.springframework.boot:spring-boot-starter-validation' //화면에서 전달받은 입력 값을 검증하기 위한 스프링 부트 validation 라이브러리, 여러 에너테이션을 사용하여 입력값 검증
     implementation 'org.springframework.boot:spring-boot-starter-security' //스프링 시큐리티 설치
     implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5' //스프링 시큐리티 설치
 }

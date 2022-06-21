@@ -1,14 +1,18 @@
 <html layout:decorate="~{layout}">
 <div layout:fragment="content" class="container">
 	<h5 class="my-3 border-bottom pb-2">질문등록</h5>
+	<!-- 검증에 실패한 오류메시지를 보여주기 위한 템플릿, 오류를 표시하기 위해 필수적으로 th:object 속성을 사용하여 폼의 속성들이 QuestionForm의 속성들로 구성된다는 점을 타임리프 엔진에 전달 -->
 	<form th:action="@{/question/create}" th:object="${questionForm}" method="post">
+        <!-- th:replace 속성을 사용하면 공통 템플릿을 템플릿 내에 삽입 가능, 아래 문장의 의미는 div 엘리먼트를 form_errors.html 파일의 th:fragment 속성명이 formErrorsFragment인 엘리먼트로 교체하라는 의미 -->
         <div th:replace="form_errors :: formErrorsFragment"></div>
 		<div class="mb-3">
 			<label for="subject" class="form-label">제목></label>
+			<!-- th:field속성을 사용하여 해당 태그의 id, name, value 속성이 모두 자동으로 생성되고 타임리프가 value 속성에 기존 값을 채워 넣어 오류 발생하더라도 기존에 입력한 값이 유지 -->
 			<input type="text" th:field="*{subject}" class="form-control">
 		</div>
 		<div class="mb-3">
 			<label for="content" class="form-label">내용</label>
+			<!-- th:field속성을 사용하여 해당 태그의 id, name, value 속성이 모두 자동으로 생성되고 타임리프가 value 속성에 기존 값을 채워 넣어 오류 발생하더라도 기존에 입력한 값이 유지 -->
 			<textarea th:field="*{content}" class="form-control" rows="10"></textarea>
 		</div>
 		<input type="submit" value="저장하기" class="btn btn-primary my-2">

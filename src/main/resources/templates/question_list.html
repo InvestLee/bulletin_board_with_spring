@@ -1,4 +1,7 @@
+<!-- layout:decorate 속성은 템플릿의 부모 템플릿으로 사용할 템플릿을 설정, ~{layout}은 layout.html을 의미 -->
 <html layout:decorate="~{layout}">
+<!-- class="container my-3", class="table", class="table-dark" 부트스트랩 스타일시트에 정의되어 있는 클래스 -->
+<!-- 부모 템플릿의 <th:block layout:fragment="content"></th:block> 부분을 자식 템플릿의 내용으로 바꾸기 위함 -->
 <div layout:fragment="content" class="container my-3">
     <table class="table">
         <thead class="table-dark">
@@ -17,12 +20,13 @@
                 	<!-- th:href 속성 : 링크의 주소 / URL 주소를 나타낼 때 @{, } 문자 사이에 입력 -->
                 	<!-- 타임리프에서 문자열을 연결(Concatenation)할 때 | 문자를 사용 ex) /question/detail/ 문자열과 ${question.if} 객체 값을 더할 때 |, | 기호로 감싸줌 -->
                     <a th:href="@{|/question/detail/${question.id}|}" th:text="${question.subject}"></a>
-                	<!-- 답변 유무 조사, 답변 개수 표시 -->
+                	<!-- th:if 답변 유무 조사, th:text 답변 개수 표시, #list.size(이터러블객체), text-danger 빨간색, ms-2 왼쪽 여백 -->
                 	<span class="text-danger small ms-2"
                         th:if="${#lists.size(question.answerList) > 0}" 
                         th:text="${#lists.size(question.answerList)}">
                     </span>
                 </td>
+                <!-- temporals.format(날짜객체, 날짜포맷) : 날짜객체를 날짜포맷에 맞게 변환한다. -->
                 <td th:text="${#temporals.format(question.createDate, 'yyyy-MM-dd HH:mm')}"></td>
             </tr>
         </tbody>
@@ -37,7 +41,10 @@
                     <span>이전</span>
                 </a>
             </li>
-            <!-- 페이지 리스트 루프, 페이지 표시 제한 기능(-5~+5), 현재 페이지와 같으면 active 적용 -->
+            <!-- th:classappend="조건식 ? 클래스값" 속성은 조건식이 참인 경우 클래스 값을 class 속성에 추가 -->
+            <!-- #numbers.sequence(시작, 끝)은 시작 번호부터 끝 번호까지의 루프를 만들어 냄 -->
+            <!-- 페이지 리스트 가독성 증진을 위한 pagination 컴포넌트의 클래스 : pahination, page-item, page-link -->
+            <!-- 페이지 리스트 루프, 페이지 표시 제한 기능(-5~+5), 현재 페이지와 같으면 active 적용하여 강조 -->
             <li th:each="page: ${#numbers.sequence(0, paging.totalPages-1)}"
             	th:if="${page >= paging.number-5 and page <= paging.number+5}"
                 th:classappend="${page == paging.number} ? 'active'" 
@@ -54,6 +61,7 @@
         </ul>
     </div>
     <!-- 페이징처리 끝 -->
+    <!-- 링크 엘리먼트 <a>...</a>이지만 부트스트랩의 btn btn primary 클래스를 적용하면 버튼으로 보임, 버튼을 누르면 /question/create URL 호출 -->
     <a th:href="@{/question/create}" class="btn btn-primary">질문 등록하기</a>
 </div>
 </html>

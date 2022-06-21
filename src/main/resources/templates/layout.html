@@ -1,5 +1,8 @@
+<!-- 템플릿 상속 : 기본 틀이 되는 템플릿을 먼저 작성하고 다른 템플릿에서 그 템플릿을 상속해 사용하는 방법 -->
+<!-- CSS파일 이름이 변경되거나 새로운 CSS 파일이 추가될 때마다 모든 템플릿 파일을 일일이 수정하는 것을 방지하기 위함 -->
 <!doctype html>
 <html lang="ko">
+<!-- 부트스트랩 : 웹 디자인 양식 -->
 <head>
     <!-- Required meta tags -->
     <meta charset="utf-8">
@@ -11,12 +14,12 @@
     <title>이지형 스프링 연습 게시판 개발</title>
 </head>
 <body>
-<!-- 네비게이션바 -->
+<!-- 네비게이션바, 공통 템플릿 기능 navbar.html 참조 -->
 <nav th:replace="navbar :: navbarFragment"></nav>
-<!-- 기본 템플릿 안에 삽입될 내용 Start -->
+<!-- 기본 템플릿 안에 삽입될 내용 Start, lauout.html을 상속한 템플릿에서 개별적으로 구현해야 하는 영역 -->
 <th:block layout:fragment="content"></th:block>
 <!-- 기본 템플릿 안에 삽입될 내용 End -->
-<!-- Bootstrap JS -->
+<!-- Bootstrap JS, 브라우저의 크기가 작아지면 네비게이션 바에 있는 링크들을 작은 햄버거 메뉴 버튼으로 숨겨주는 부트스트랩 반응형 웹 기능 -->
 <script th:src="@{/bootstrap.min.js}"></script>
 </body>
 </html>

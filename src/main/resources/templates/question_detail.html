@@ -1,9 +1,11 @@
 <html layout:decorate="~{layout}">
 <div layout:fragment="content" class="container my-3">
+<!-- 질문이나 답변은 하나의 뭉치에 해당하므로 부트스트랩의 card 컴포넌트 사용, 부트스트랩 클래스 참조 -->
     <!-- 질문 -->
     <h2 class="border-bottom py-2" th:text="${question.subject}"></h2>
     <div class="card my-3">
         <div class="card-body">
+        	<!-- style="white-space: pre-line;"은 글 내용의 줄 바꿈을 정상적으로 보여주기 위해 적용된 스타일 -->
             <div class="card-text" style="white-space: pre-line;" th:text="${question.content}"></div>
             <div class="d-flex justify-content-end">
                 <div class="badge bg-light text-dark p-2 text-start">
@@ -12,7 +14,7 @@
             </div>
         </div>
     </div>
-    <!-- 답변의 갯수 표시 -->
+    <!-- 답변의 갯수 표시, #lists.size(iterable 객체)는 타임리프가 제공하는 유틸리티로 객체의 길이 반환 -->
     <h5 class="border-bottom my-3 py-2" 
         th:text="|${#lists.size(question.answerList)}개의 답변이 있습니다.|"></h5>
     <!-- 답변 반복 시작 -->
@@ -28,7 +30,11 @@
     </div>
     <!-- 답변 반복 끝  -->
     <!-- 답변 작성 -->
+    <!-- 답변등록 버튼을 누르면 전송되는 form의 action은 타임리프의 th:action 속성으로 생성 -->
+    <!-- 답변등록 버튼을 누르면 POST 방식으로 /answer/create/<질문id> URL이 호출 -->
+    <!-- AnswerForm을 통해 검증하므로 th:object 속성 추가, th:field 속성을 사용하여 오류가 발생하더라도 내용 유지 -->
     <form th:action="@{|/answer/create/${question.id}|}" th:object="${answerForm}" method="post" class="my-3">
+        <!-- th:replace 속성을 사용하면 공통 템플릿을 템플릿 내에 삽입 가능, 아래 문장의 의미는 div 엘리먼트를 form_errors.html 파일의 th:fragment 속성명이 formErrorsFragment인 엘리먼트로 교체하라는 의미 -->
         <div th:replace="form_errors :: formErrorsFragment"></div>
         <textarea th:field="*{content}" rows="10" class="form-control"></textarea>
         <input type="submit" value="답변등록" class="btn btn-primary my-2">
