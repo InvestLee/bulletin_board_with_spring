@@ -15,7 +15,7 @@
                     <a class="nav-link" sec:authorize="isAnonymous()" th:href="@{/user/login}">로그인</a>
                     <a class="nav-link" sec:authorize="isAuthenticated()" th:href="@{/user/logout}">로그아웃</a>
                 </li>
-                <!-- 회원가입 링크 -->
+                <!-- 회원가입 링크, 회원가입 화면으로 이동 -->
                 <li class="nav-item">
                     <a class="nav-link" th:href="@{/user/signup}">회원가입</a>
                 </li>

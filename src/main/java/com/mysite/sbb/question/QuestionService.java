@@ -16,6 +16,7 @@ import java.util.Optional;
 import java.time.LocalDateTime;
 
 import com.mysite.sbb.DataNotFoundException;
+import com.mysite.sbb.user.SiteUser;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -52,11 +53,25 @@ public class QuestionService {
     }
     
     //제목과 내용을 입력으로 하여 질문 데이터를 저장하는 create 메서드
-    public void create(String subject, String content) {
+    public void create(String subject, String content, SiteUser user) {
         Question q = new Question();
         q.setSubject(subject);
         q.setContent(content);
         q.setCreateDate(LocalDateTime.now());
+        q.setAuthor(user);
         this.questionRepository.save(q);
+    }
+    
+    //질문 데이터를 수정할 수 있는 modify 메서드 추가
+    public void modify(Question question, String subject, String content) {
+        question.setSubject(subject);
+        question.setContent(content);
+        question.setModifyDate(LocalDateTime.now());
+        this.questionRepository.save(question);
+    }
+    
+    //Question 객체를 입력으로 받아 Question 리포지터리를 사용하여 질문 데이터를 삭제하는 delete 메서드 추가
+    public void delete(Question question) {
+        this.questionRepository.delete(question);
     }
 }

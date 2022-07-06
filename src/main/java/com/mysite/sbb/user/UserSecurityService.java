@@ -17,7 +17,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Service
 public class UserSecurityService implements UserDetailsService {
-	//스프링 시큐리티의 UserDetailsService는 loadUserByUsername 메서드를 구현하도록 하는 인터페이스
+	//스프링 시큐리티의 UserDetailsService는 loadUserByUsername 메서드를 구현하도록 하는 인터페이스, UserSecurityService는 스프링 시큐리티 로그인 처리의 핵심 부분
     private final UserRepository userRepository;
 
     @Override
@@ -38,6 +38,6 @@ public class UserSecurityService implements UserDetailsService {
         }
         //사용자명, 비밀번호, 권한을 입력으로 스프링 시큐리티 User 객체 생성
         return new User(siteUser.getUsername(), siteUser.getPassword(), authorities);
-        //스프링 시큐리티는 loadUserByUsername 메서드에 의해 리턴된 User 객체의 비밀번호가 화면으로부터 입력받은 비밀번호와 일치하는지를 검사하는 로직
+        //스프링 시큐리티는 loadUserByUsername 메서드에 의해 리턴된 User 객체의 비밀번호가 화면으로부터 입력받은 비밀번호와 일치하는지를 검사하는 로직을 내부적으로 가지고 있음
     }
 }

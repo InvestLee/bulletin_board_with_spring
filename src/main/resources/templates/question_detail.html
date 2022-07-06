@@ -8,10 +8,33 @@
         	<!-- style="white-space: pre-line;"은 글 내용의 줄 바꿈을 정상적으로 보여주기 위해 적용된 스타일 -->
             <div class="card-text" style="white-space: pre-line;" th:text="${question.content}"></div>
             <div class="d-flex justify-content-end">
+            	<!-- 질문 상세 화면에 질문 수정일시 추가 -->
+            	<div th:if="${question.modifyDate != null}" class="badge bg-light text-dark p-2 text-start mx-3">
+                	<div class="mb-2">modified at</div>
+                	<div th:text="${#temporals.format(question.modifyDate, 'yyyy-MM-dd HH:mm')}"></div>
+            	</div>
                 <div class="badge bg-light text-dark p-2 text-start">
+                	<div class="mb-2">
+                    	<span th:if="${question.author != null}" th:text="${question.author.username}"></span>
+                	</div>
                     <div th:text="${#temporals.format(question.createDate, 'yyyy-MM-dd HH:mm')}"></div>
                 </div>
             </div>
+            <div class="my-3">
+            	<!-- 수정 버튼은 로그인한 사용자와 글쓴이가 동일한 경우에만 노출되도록 #authentication.getPrincipal().getUsername() == question.author.username을 적용 -->
+            	<!-- #authentication.getPrincipal()은 Principal 객체를 리턴하는 타임리프의 유틸리티 -->
+            	<a th:href="@{|/question/modify/${question.id}|}" class="btn btn-sm btn-outline-secondary"
+                	sec:authorize="isAuthenticated()"
+                	th:if="${question.author != null and #authentication.getPrincipal().getUsername() == question.author.username}"
+                	th:text="수정"></a>
+                <!-- href 속성값을 javascript:void(0)로 설정, 삭제를 실행할 URL을 얻기 위해 th:data-uri 속성 추가, 삭제 버튼이 눌리는 이벤트 확인을 위해 class속성에 delete 항목 추가-->
+                <!-- data-uri 속성은 자바스크립트에서 클릭 이벤트 발생시 this.dataset.uri와 같이 사용하여 그 값을 얻을 수 있다. -->
+                <!-- href에 삭제 URL을 직접 사용하지 않은 이유는 삭제 버튼을 클릭했을 때 "정말로 삭제하시겠습니까?"와 같은 확인절차가 필요하기 때문 -->
+                <a href="javascript:void(0);" th:data-uri="@{|/question/delete/${question.id}|}"
+                	class="delete btn btn-sm btn-outline-secondary" sec:authorize="isAuthenticated()"
+                	th:if="${question.author != null and #authentication.getPrincipal().getUsername() == question.author.username}"
+                	th:text="삭제"></a>
+        	</div>
         </div>
     </div>
     <!-- 답변의 갯수 표시, #lists.size(iterable 객체)는 타임리프가 제공하는 유틸리티로 객체의 길이 반환 -->
@@ -22,10 +45,33 @@
         <div class="card-body">
             <div class="card-text" style="white-space: pre-line;" th:text="${answer.content}"></div>
             <div class="d-flex justify-content-end">
+            	<!-- 질문 상세 화면에 답변 수정일시 추가 -->
+            	<div th:if="${answer.modifyDate != null}" class="badge bg-light text-dark p-2 text-start mx-3">
+                	<div class="mb-2">modified at</div>
+                	<div th:text="${#temporals.format(answer.modifyDate, 'yyyy-MM-dd HH:mm')}"></div>
+            	</div>
                 <div class="badge bg-light text-dark p-2 text-start">
+                	<div class="mb-2">
+                    	<span th:if="${question.author != null}" th:text="${question.author.username}"></span>
+                	</div>
                     <div th:text="${#temporals.format(answer.createDate, 'yyyy-MM-dd HH:mm')}"></div>
                 </div>
             </div>
+            <div class="my-3">
+            	<!-- 수정 버튼은 로그인한 사용자와 글쓴이가 동일한 경우에만 노출되도록 #authentication.getPrincipal().getUsername() == answer.author.username을 적용 -->
+            	<!-- #authentication.getPrincipal()은 Principal 객체를 리턴하는 타임리프의 유틸리티 -->
+            	<a th:href="@{|/answer/modify/${answer.id}|}" class="btn btn-sm btn-outline-secondary"
+                	sec:authorize="isAuthenticated()"
+                	th:if="${answer.author != null and #authentication.getPrincipal().getUsername() == answer.author.username}"
+                	th:text="수정"></a>
+                <!-- href 속성값을 javascript:void(0)로 설정, 삭제를 실행할 URL을 얻기 위해 th:data-uri 속성 추가, 삭제 버튼이 눌리는 이벤트 확인을 위해 class속성에 delete 항목 추가-->
+                <!-- data-uri 속성은 자바스크립트에서 클릭 이벤트 발생시 this.dataset.uri와 같이 사용하여 그 값을 얻을 수 있다. -->
+                <!-- href에 삭제 URL을 직접 사용하지 않은 이유는 삭제 버튼을 클릭했을 때 "정말로 삭제하시겠습니까?"와 같은 확인절차가 필요하기 때문 -->
+                <a href="javascript:void(0);" th:data-uri="@{|/answer/delete/${answer.id}|}"
+                	class="delete btn btn-sm btn-outline-secondary" sec:authorize="isAuthenticated()"
+                	th:if="${answer.author != null and #authentication.getPrincipal().getUsername() == answer.author.username}"
+                	th:text="삭제"></a>
+        	</div>
         </div>
     </div>
     <!-- 답변 반복 끝  -->
@@ -36,8 +82,22 @@
     <form th:action="@{|/answer/create/${question.id}|}" th:object="${answerForm}" method="post" class="my-3">
         <!-- th:replace 속성을 사용하면 공통 템플릿을 템플릿 내에 삽입 가능, 아래 문장의 의미는 div 엘리먼트를 form_errors.html 파일의 th:fragment 속성명이 formErrorsFragment인 엘리먼트로 교체하라는 의미 -->
         <div th:replace="form_errors :: formErrorsFragment"></div>
-        <textarea th:field="*{content}" rows="10" class="form-control"></textarea>
+        <!-- 로그인 상태가 아닌 경우 textarea 태그에 disabled 속성을 적용하여 입력을 못하게 함, sec:authorize="isAnonymous()" : 현재 로그아웃 상태, sec:authorize="isAuthenticated()" : 현재 로그인 상태-->
+        <textarea sec:authorize="isAnonymous()" disabled th:field="*{content}" class="form-control" rows="10"></textarea>
+        <textarea sec:authorize="isAuthenticated()" th:field="*{content}" class="form-control" rows="10"></textarea>
         <input type="submit" value="답변등록" class="btn btn-primary my-2">
     </form>
 </div>
+<script layout:fragment="script" type='text/javascript'>
+//delete 클래스를 포함하는 컴포넌트(ex:버튼, 링크)를 클릭하면 "정말로 삭제하시겠습니까?"라는 질문을 하고 "확인"을 선택했을때 해당 컴포넌트의 data-uri값으로 URL 호출을 하라는 의미
+//확인 대신 취소를 선택하면 아무 일도 발생하지 않는다. 확인을 선택하면 data-uri속성에 해당하는 @{|/question/delete/${question.id}|}이 호출
+const delete_elements = document.getElementsByClassName("delete");
+Array.from(delete_elements).forEach(function(element) {
+    element.addEventListener('click', function() { 
+        if(confirm("정말로 삭제하시겠습니까?")) {
+            location.href = this.dataset.uri;
+        };
+    });
+});
+</script>
 </html>

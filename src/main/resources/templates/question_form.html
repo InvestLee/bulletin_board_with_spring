@@ -2,7 +2,10 @@
 <div layout:fragment="content" class="container">
 	<h5 class="my-3 border-bottom pb-2">질문등록</h5>
 	<!-- 검증에 실패한 오류메시지를 보여주기 위한 템플릿, 오류를 표시하기 위해 필수적으로 th:object 속성을 사용하여 폼의 속성들이 QuestionForm의 속성들로 구성된다는 점을 타임리프 엔진에 전달 -->
-	<form th:action="@{/question/create}" th:object="${questionForm}" method="post">
+	<form th:object="${questionForm}" method="post">
+        <!-- CSRF값을 자동에서 수동으로 추가하기 위해 th:action="@{/question/create}"를 삭제한다. -->
+        <!-- 폼 태그의 action 속성 없이 폼을 전송하면 폼의 action은 현재의 URL을 기준으로 전송, 즉 질문 등록시 URL /question/create 그리고 수정시 URL /question/modify/2 각각 기준으로 전송 가능 -->
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
         <!-- th:replace 속성을 사용하면 공통 템플릿을 템플릿 내에 삽입 가능, 아래 문장의 의미는 div 엘리먼트를 form_errors.html 파일의 th:fragment 속성명이 formErrorsFragment인 엘리먼트로 교체하라는 의미 -->
         <div th:replace="form_errors :: formErrorsFragment"></div>
 		<div class="mb-3">

@@ -42,7 +42,7 @@ public class UserController {
         }catch(DataIntegrityViolationException e) {
         	//기존 사용자와 동일한 사용한ID 또는 동일한 이메일 주소인 경우 SiteUser.jave의 unique=true 설정으로 DataIntegrityViolationException이 발생
         	//다른 오류의 경우에는 e.getMessage()로 출력
-        	//bindingResult.reject(오류코드, 오류메시지)
+        	//bindingResult.reject(오류코드, 오류메시지)는 특정 필드의 오류가 아닌 일반적인 오류 등록 시 사용
             e.printStackTrace();
             bindingResult.reject("signupFailed", "이미 등록된 사용자입니다.");
             return "signup_form";
@@ -52,9 +52,11 @@ public class UserController {
             return "signup_form";
         }
         
+        //회원가입 성공 시 메인페이지로 리다이렉트
         return "redirect:/";
     }
     
+    //스프링 시큐리티(SecurityConfig)에 로그인 URL을 /user/login으로 설정했으므로 해당 매핑 추가
     @GetMapping("/login")
     public String login() {
     	return "login_form"; //login_form.html 템플릿을 렌터링하는 GET방식의 login 메서드

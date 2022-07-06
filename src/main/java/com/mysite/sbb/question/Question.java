@@ -10,8 +10,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.ManyToOne; //여러 개의 질문이 한 명의 사용자에게 작성될 수 있으므로 ManyToOne 
 
 import com.mysite.sbb.answer.Answer;
+import com.mysite.sbb.user.SiteUser;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -37,4 +39,9 @@ public class Question {
 	//CascadeType.REMOVE는 질문을 삭제하면 그에 달린 답변들도 모두 삭제하기 위해 사용
 	@OneToMany(mappedBy = "question", cascade = CascadeType.REMOVE) //질문은 하나 답변은 여러 개
 	private List<Answer> answerList;
+	
+	@ManyToOne
+	private SiteUser author;
+	
+	private LocalDateTime modifyDate; //수정 일시
 }
