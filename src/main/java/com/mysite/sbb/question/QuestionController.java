@@ -34,12 +34,15 @@ public class QuestionController {
 	private final UserService userService;
 
     @RequestMapping("/list")
-    public String list(Model model, @RequestParam(value="page", defaultValue="0") int page) {
+    public String list(Model model, @RequestParam(value="page", defaultValue="0") int page,
+    		@RequestParam(value = "kw", defaultValue = "") String kw) {
     	//GET방식으로 요청된 URL에서 page값을 가져오기 위해 @RequestParam(value="page", defaultValue="0") int page 매개변수 추가, 파라미터 page가 URL에 전달되지 않은 경우 디폴트 값으로 0 설정
     	//스프링부트의 페이징은 첫페이지 번호가 1이 아닌 0이다.
     	//템플릿에 Page<Question> 객체인 paging을 전달
-        Page<Question> paging = this.questionService.getList(page);
+    	//검색어에 해당하는 kw 파라미터를 추가했고 디폴트 값으로 빈 문자열 설정
+        Page<Question> paging = this.questionService.getList(page, kw);
         model.addAttribute("paging", paging); //Model 객체에 값을 담아두면 템플릿에서 그 값을 사용 가능(Model객체는 컨트롤러 메서드의 매개변수로 지정하기만 하면 스프링 부트가 자동으로 생성)
+        model.addAttribute("kw", kw); //화면에서 입력한 검색어를 화면에 유지하기 위해 kw 값으로 저장
         return "question_list"; //question_list.html 템플릿 파일 리턴
 	}
     
@@ -119,5 +122,16 @@ public class QuestionController {
         }
         this.questionService.delete(question);
         return "redirect:/";
+    }
+    
+    //추천 버튼을 눌렀을 때 호출되는 URL을 처리
+    @PreAuthorize("isAuthenticated()") //추천은 로그인한 사람만 가능해야 함
+    @GetMapping("/vote/{id}")
+    public String questionVote(Principal principal, @PathVariable("id") Integer id) {
+        //QuestionService의 vote 메서드를 호출하여 추천인을 저장, 오류가 없다면 질문 상세화면으로 리다이렉트
+    	Question question = this.questionService.getQuestion(id);
+        SiteUser siteUser = this.userService.getUser(principal.getName());
+        this.questionService.vote(question, siteUser);
+        return String.format("redirect:/question/detail/%s", id);
     }
 }

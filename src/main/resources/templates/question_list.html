@@ -3,6 +3,22 @@
 <!-- class="container my-3", class="table", class="table-dark" 부트스트랩 스타일시트에 정의되어 있는 클래스 -->
 <!-- 부모 템플릿의 <th:block layout:fragment="content"></th:block> 부분을 자식 템플릿의 내용으로 바꾸기 위함 -->
 <div layout:fragment="content" class="container my-3">
+    <!-- 검색어를 입력할 수 있는 텍스트창을 다음과 같이 질문 목록 템플릿에 추가 -->
+    <div class="row my-3">
+        <div class="col-6">
+        	<!-- 링크 엘리먼트 <a>...</a>이지만 부트스트랩의 btn btn primary 클래스를 적용하면 버튼으로 보임, 버튼을 누르면 /question/create URL 호출 -->
+            <a th:href="@{/question/create}" class="btn btn-primary">질문 등록하기</a>
+        </div>
+        <div class="col-6">
+            <div class="input-group">
+              	<!--자바 스크립트에서 이 텍스트 창에 입력된 값을 읽기 위해 텍스트창 id 속성에 "search_kw"값 추가-->
+                <input type="text" id="search_kw" class="form-control" th:value="${kw}">
+                <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="button" id="btn_search">찾기</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <table class="table">
         <thead class="table-dark">
         	<!-- 가운데 정렬 -->
@@ -42,8 +58,9 @@
         <ul class="pagination justify-content-center">
         	<!-- 이전 페이지가 없으면 비활성화 -->
             <li class="page-item" th:classappend="${!paging.hasPrevious} ? 'disabled'">
-                <!-- 이전 페이지 링크 -->
-                <a class="page-link" th:href="@{|?page=${paging.number-1}|}">
+                <!-- 이전 페이지 링크, 모든 페이지 링크를 href 속성에 직접 입력하는 대신 data-page 속성으로 값을 읽을 수 있도록 변경 -->
+                <!-- class 속성값으로 "page-link"값을 가진 링크 클릭 시 data-page 속성값을 읽어 searchForm의 page 필드에 설정하여  searchForm을 요청하도록 아래 자바스크립트 추가-->
+                <a class="page-link" href="javascript:void(0)" th:data-page="${paging.number-1}">
                     <span>이전</span>
                 </a>
             </li>
@@ -55,19 +72,41 @@
             	th:if="${page >= paging.number-5 and page <= paging.number+5}"
                 th:classappend="${page == paging.number} ? 'active'" 
                 class="page-item">
-                <a th:text="${page}" class="page-link" th:href="@{|?page=${page}|}"></a>
+                <a th:text="${page}" class="page-link" href="javascript:void(0)" th:data-page="${page}"></a>
             </li>
             <!-- 다음 페이지가 없으면 비활성화 -->
             <li class="page-item" th:classappend="${!paging.hasNext} ? 'disabled'">
                 <!-- 다음 페이지 링크 -->
-                <a class="page-link" th:href="@{|?page=${paging.number+1}|}">
+                <a class="page-link" href="javascript:void(0)" th:data-page="${paging.number+1}">
                     <span>다음</span>
                 </a>
             </li>
         </ul>
     </div>
     <!-- 페이징처리 끝 -->
-    <!-- 링크 엘리먼트 <a>...</a>이지만 부트스트랩의 btn btn primary 클래스를 적용하면 버튼으로 보임, 버튼을 누르면 /question/create URL 호출 -->
-    <a th:href="@{/question/create}" class="btn btn-primary">질문 등록하기</a>
+    <!-- page와 kw를 동시에 GET으로 요청할 수 있는 searchForm, method 속성 "get", action 속성은 "폼이 전송되는 URL"이므로 질문 목록 URL(/question/list) 지정 -->
+    <!-- POST 요청이 발생할 경우 중복 요청을 방지하기 위해 "만료된 페이지입니다."라는 오류 발생, 이러한 이유로 여러 파라미터를 조합하여 게시물 목록을 조회할 때는 GET 방식 사용 -->
+    <form th:action="@{/question/list}" method="get" id="searchForm">
+        <!-- kw와 page는 이전에 요청했던 값을 기억하고 있어야 하므로 value에 값을 유지, 이전에 요청했던 kw와 page의 값은 컨트롤러로부터 다시 전달받음 -->
+        <input type="hidden" id="kw" name="kw" th:value="${kw}">
+        <input type="hidden" id="page" name="page" th:value="${paging.number}">
+    </form>
 </div>
+<script layout:fragment="script" type='text/javascript'>
+//page-link 클래스의 data-page 속성값을 읽어 searchForm의 page 필드에 설정하여 searchForm을 요청
+const page_elements = document.getElementsByClassName("page-link");
+Array.from(page_elements).forEach(function(element) {
+    element.addEventListener('click', function() {
+        document.getElementById('page').value = this.dataset.page;
+        document.getElementById('searchForm').submit();
+    });
+});
+//검색 버튼을 클릭하면 검색어 텍스트창에 입력된 값을 searchForm의 kw필드에 설정하여 searchForm을 요청
+const btn_search = document.getElementById("btn_search");
+btn_search.addEventListener('click', function() {
+    document.getElementById('kw').value = document.getElementById('search_kw').value;
+    document.getElementById('page').value = 0;  // 검색버튼을 클릭할 경우 0페이지부터 조회한다.(검색버튼 클릭하는 경우 새로운 검색에 해당되므로)
+    document.getElementById('searchForm').submit();
+});
+</script>
 </html>

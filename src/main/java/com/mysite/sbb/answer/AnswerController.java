@@ -7,6 +7,7 @@ import javax.validation.Valid;
 
 import com.mysite.sbb.question.Question;
 import com.mysite.sbb.question.QuestionService;
+import com.mysite.sbb.answer.AnswerService;
 import com.mysite.sbb.user.SiteUser;
 import com.mysite.sbb.user.UserService;
 
@@ -19,11 +20,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 //RequestParam String content : 템플릿에서 답변으로 입력한 내용(Content)을 얻기 위해 추가, textarea(템플릿의 답변 내용)의 name 속성명이 content이므로 변수명을 contect로 사용(다른 이름으로 사용할시 오류 발생)
 import org.springframework.web.bind.annotation.RequestParam; 
+import org.springframework.data.domain.Page;
 import org.springframework.validation.BindingResult;
 import org.springframework.security.access.prepost.PreAuthorize; 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.data.domain.Page;
+
 
 @RequestMapping("/answer") //URL 프리픽스 /answer로 고정
 @RequiredArgsConstructor
@@ -34,7 +38,6 @@ public class AnswerController {
 	private final AnswerService answerService; //답변을 저장하기 위한 답변 서비스 클래스
 	private final UserService userService;
 
-	
 	@PreAuthorize("isAuthenticated()")
 	@PostMapping("/create/{id}") // /answer/create/{id}와 같은 URL 요청시 createAnswer 메서드 호출되도록 PostMapping, {id}는 질문의 id, PostMapping은 @RequestMapping과 동일하게 매핑을 담당하지만 POST요청만 받아들일 경우에 사용, GET방식으로 요청할 경우 오류 발생
     public String createAnswer(Model model, @PathVariable("id") Integer id, 
@@ -47,8 +50,9 @@ public class AnswerController {
         	model.addAttribute("question", question);
             return "question_detail";
         }
-        this.answerService.create(question, answerForm.getContent(), siteUser); //답변 저장
-        return String.format("redirect:/question/detail/%s", id);
+        //답변 등록 및 수정 시 지정한 앵커 태그로 이동하도록 코드 수정, 리다이렉트되는 질문 상세 URL에 #answer_%s와 같은 앵커 추가
+        Answer answer = this.answerService.create(question, answerForm.getContent(), siteUser); //답변 저장
+        return String.format("redirect:/question/detail/%s#answer_%s", answer.getQuestion().getId(), answer.getId());
     }
 	
 	//GET방식의 /answer/modify/답변ID URL을 처리
@@ -78,7 +82,7 @@ public class AnswerController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정권한이 없습니다.");
         }
         this.answerService.modify(answer, answerForm.getContent());
-        return String.format("redirect:/question/detail/%s", answer.getQuestion().getId());
+        return String.format("redirect:/question/detail/%s#answer_%s", answer.getQuestion().getId(), answer.getId());
     }
 	
 	//GET방식의 /answer/delete/답변ID URL을 처리
@@ -93,4 +97,23 @@ public class AnswerController {
         this.answerService.delete(answer);
         return String.format("redirect:/question/detail/%s", answer.getQuestion().getId());
     }
+	
+	//추천 버튼을 눌렀을 때 호출되는 URL을 처리
+    @PreAuthorize("isAuthenticated()") //추천은 로그인한 사람만 가능해야 함
+    @GetMapping("/vote/{id}")
+    public String answerVote(Principal principal, @PathVariable("id") Integer id) {
+        //AnswerService의 vote 메서드를 호출하여 추천인을 저장, 오류가 없다면 질문 상세화면으로 리다이렉트
+    	Answer answer = this.answerService.getAnswer(id);
+        SiteUser siteUser = this.userService.getUser(principal.getName());
+        this.answerService.vote(answer, siteUser);
+        return String.format("redirect:/question/detail/%s#answer_%s", answer.getQuestion().getId(), answer.getId());
+    }
+    
+    /*
+    @RequestMapping(value = "/detail/{id}")
+    public String list(Model model, @RequestParam(value="page", defaultValue="0") int page) {
+        Page<Answer> paging = this.answerService.getList(page);
+        model.addAttribute("paging", paging);
+        return "question_detail";
+    }*/
 }

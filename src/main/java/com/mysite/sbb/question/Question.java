@@ -2,6 +2,7 @@ package com.mysite.sbb.question;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -11,6 +12,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.ManyToOne; //여러 개의 질문이 한 명의 사용자에게 작성될 수 있으므로 ManyToOne 
+import javax.persistence.ManyToMany; //하나의 질문에 여러 사람이 추천할 수 있고 한 사람이 여러 개의 질문을 추천할 수 있음, 대등 관계
 
 import com.mysite.sbb.answer.Answer;
 import com.mysite.sbb.user.SiteUser;
@@ -44,4 +46,11 @@ public class Question {
 	private SiteUser author;
 	
 	private LocalDateTime modifyDate; //수정 일시
+	
+	@ManyToMany
+	Set<SiteUser> voter; //추천인은 중복되면 안되므로 Set
+	/*
+	@ManyToMany 관계로 속성을 생성하면 새로운 테이블을 생성하여 데이터를 관리
+	테이블에는 서로 연관된 엔티티의 고유번호(id) 2개가 primary key로 되어 있기 때문에 다대다(N:N) 관계가 성립하는 구조다.
+	*/
 }
