@@ -8,6 +8,7 @@ import java.util.List;
 import org.springframework.data.domain.Page; //JPA 관련 라이브러리의 페이징 패키지
 import org.springframework.data.domain.Pageable; //JPA 관련 라이브러리의 페이징 패키지
 import org.springframework.data.jpa.repository.JpaRepository;
+
 import org.springframework.data.jpa.domain.Specification;
 
 //엔티티만으로는 데이터베이스에 데이저를 저장하거나 조회할 수 없으므로 데이터 처리를 위해서는 실제 데이터베이스와 연동하는 JPA 리포지터리가 필요
@@ -21,7 +22,7 @@ public interface QuestionRepository extends JpaRepository<Question, Integer> {
 	List<Question> findBySubjectLike(String subject); //응답 결과가 여러건인 경우에는 리턴 타입을 Question이 아닌 List<Question>으로 한다
 	Page<Question> findAll(Pageable pageable); //Pageable 객체를 입력으로 받아 page<Question> 타입 객체를 리턴
 	Page<Question> findAll(Specification<Question> spec, Pageable pageable); // Specification객체와 Pageable 객체를 입력으로 Question 엔티티 조회
-
+	
 	/* 자바코드가 아닌 직접 쿼리를 작성하여 검색하는 경우
 	@Query("select "
             + "distinct q "

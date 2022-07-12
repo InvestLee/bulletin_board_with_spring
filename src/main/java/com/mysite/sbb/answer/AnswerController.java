@@ -7,7 +7,6 @@ import javax.validation.Valid;
 
 import com.mysite.sbb.question.Question;
 import com.mysite.sbb.question.QuestionService;
-import com.mysite.sbb.answer.AnswerService;
 import com.mysite.sbb.user.SiteUser;
 import com.mysite.sbb.user.UserService;
 
@@ -20,13 +19,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 //RequestParam String content : 템플릿에서 답변으로 입력한 내용(Content)을 얻기 위해 추가, textarea(템플릿의 답변 내용)의 name 속성명이 content이므로 변수명을 contect로 사용(다른 이름으로 사용할시 오류 발생)
 import org.springframework.web.bind.annotation.RequestParam; 
-import org.springframework.data.domain.Page;
 import org.springframework.validation.BindingResult;
 import org.springframework.security.access.prepost.PreAuthorize; 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.server.ResponseStatusException;
-import org.springframework.data.domain.Page;
 
 
 @RequestMapping("/answer") //URL 프리픽스 /answer로 고정
@@ -108,12 +105,4 @@ public class AnswerController {
         this.answerService.vote(answer, siteUser);
         return String.format("redirect:/question/detail/%s#answer_%s", answer.getQuestion().getId(), answer.getId());
     }
-    
-    /*
-    @RequestMapping(value = "/detail/{id}")
-    public String list(Model model, @RequestParam(value="page", defaultValue="0") int page) {
-        Page<Answer> paging = this.answerService.getList(page);
-        model.addAttribute("paging", paging);
-        return "question_detail";
-    }*/
 }

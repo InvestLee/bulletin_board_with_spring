@@ -4,9 +4,11 @@ import java.security.Principal;
 import java.util.List;
 import javax.validation.Valid;
 
+import com.mysite.sbb.answer.Answer;
 import com.mysite.sbb.answer.AnswerForm;
 import com.mysite.sbb.user.SiteUser;
 import com.mysite.sbb.user.UserService;
+import com.mysite.sbb.answer.AnswerService;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model; //질문 목록을 조회하기 위해 Question 리포지터리를 사용해야 하고 조회한 질문 목록은 Model 클래스를 사용하여 템플릿에 전달
@@ -31,6 +33,7 @@ import lombok.RequiredArgsConstructor;
 public class QuestionController {
 	
 	private final QuestionService questionService; //생성자 주입 DI (컨트롤러 -> 서비스 -> 리포지터리 순서로 데이터 처리)
+	private final AnswerService answerService; //답변 페이징 기능을 위해 추가
 	private final UserService userService;
 
     @RequestMapping("/list")
@@ -48,10 +51,12 @@ public class QuestionController {
     
     //@PathVariable은 {id}를 숫자 n처럼 변하는 id 값으로 지정할 때 사용
     @RequestMapping(value = "/detail/{id}")
-    public String detail(Model model, @PathVariable("id") Integer id, AnswerForm answerForm) {
+    public String detail(Model model, @PathVariable("id") Integer id, AnswerForm answerForm, @RequestParam(value="page", defaultValue="0") int page) {
     	//question_detail 템플릿이 AnswerForm을 사용하므로 매개변수 AnswerForm answerForm 추가
     	Question question = this.questionService.getQuestion(id); //QuestionService의 getQuestion 메서드 호출
-        model.addAttribute("question", question);
+    	Page<Answer> paging = this.answerService.getList(question, page);
+    	model.addAttribute("paging", paging);
+    	model.addAttribute("question", question);
     	return "question_detail";
     }
     
