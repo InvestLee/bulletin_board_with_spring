@@ -65,13 +65,8 @@ public class AnswerService {
         this.answerRepository.save(answer);
     }
     
-    public Page<Answer> getList(Question question, int page) {
-    	List<Sort.Order> sorts = new ArrayList<>(); //Sort.Order 객체로 구성된 리스트에 Sort.Order 객체를 추가하고 Sort.by(소트리스트)로 소트 객체 생성
-    	sorts.add(Sort.Order.desc("Voter")); //추천이 많은 순으로 정렬
-    	sorts.add(Sort.Order.desc("createDate")); //날짜기준으로 역순으로 정렬(최신 댓글이 1페이지)
-        //아래 문장을 통해 데이터 전체를 조회하지 않고 해당 페이지의 데이터만 조회하도록 쿼리가 변경됨
-        //PageRequest.of(page, 10, Sort.by(sorts)) = (조회할 페이지 번호, 한 페이지에 보여줄 게시물의 갯수, Sort 객체 전달)
-    	Pageable pageable = PageRequest.of(page, 3, Sort.by(sorts)); 
-    	return this.answerRepository.findAllByQuestion(question, pageable);
+    public Page<Answer> getList(Integer questionId, int page) {
+    	Pageable pageable = PageRequest.of(page, 3); 
+    	return this.answerRepository.findAllByQuestion(questionId, pageable);
     }
 }

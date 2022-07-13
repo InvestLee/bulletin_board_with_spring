@@ -1,7 +1,6 @@
 package com.mysite.sbb.question;
 
 import java.security.Principal;
-import java.util.List;
 import javax.validation.Valid;
 
 import com.mysite.sbb.answer.Answer;
@@ -18,7 +17,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize; 
 //@PreAuthorize("isAuthenticated()")이 붙은 메서드는 로그인이 필요한 메서드를 의미, 만약 로그아웃 상태로 호출되면 로그인 페이지로 이동
@@ -54,7 +52,7 @@ public class QuestionController {
     public String detail(Model model, @PathVariable("id") Integer id, AnswerForm answerForm, @RequestParam(value="page", defaultValue="0") int page) {
     	//question_detail 템플릿이 AnswerForm을 사용하므로 매개변수 AnswerForm answerForm 추가
     	Question question = this.questionService.getQuestion(id); //QuestionService의 getQuestion 메서드 호출
-    	Page<Answer> paging = this.answerService.getList(question, page);
+    	Page<Answer> paging = this.answerService.getList(id, page);
     	model.addAttribute("paging", paging);
     	model.addAttribute("question", question);
     	return "question_detail";
