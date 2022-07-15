@@ -1,4 +1,16 @@
 # Spring_Development_Study
+
+[사용 기술]
+- Java  
+- SpringBoot
+- Spring Security
+- H2 Database
+- JPA(Java Persistent API)
+- Thymeleaf
+- Bootstrap
+- HTML/CSS/Javascript
+- SQL
+
 [책에 없는 기능 추가 목록]
 1. 추천 취소 기능
 2. 댓글 페이징 기능
