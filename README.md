@@ -1,4 +1,4 @@
-# Spring_Development_Study
+# Q&A_bulletin_board_with_spring
 
 [사용 기술]
 - Java  
